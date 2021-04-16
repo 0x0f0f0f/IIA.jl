@@ -2,3 +2,7 @@ name = "IIA"
 uuid = "c125c2a5-8ddb-466f-9a10-ece2ff8e0474"
 authors = ["0x0f0f0f <sudo-woodo3@protonmail.com>"]
 version = "0.1.0"
+
+[deps]
+Pluto = "c3e4b0f8-55cb-11ea-2926-15256bba5781"
+Weave = "44d3d7a6-8a23-5bf8-98c5-b353f8df5ec9"

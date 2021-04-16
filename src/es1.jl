@@ -29,7 +29,8 @@ RI = 2  # Right Wall
 TO = 3  # Top Wall 
 BO = 4  # Bottom Wall
 
-labirinth = 
+# The labirinth
+world = 
     [
         EE EE EE EE ;
         EE TO TO LE ;
@@ -37,11 +38,63 @@ labirinth =
         EE TO EE EE ; 
     ]
 
-
 #' ### Formulation of the problem as a state search problem 
 #' The **states** are all the possible coordinates of theseus in the labirinth in the form `(x,y)` 
 initial_state = (2,1)
-possible_actions = [:↑, :←, :→, :↓]
 goal_test(state) = (state == (2,4))
+all_actions = Set([:↑, :←, :→, :↓])
 
-#' We now define a function that gives us
+#' We now define a function that gives us the possible actions from a given state
+function actions(state) 
+    x, y = state
+    rows, cols = size(world)
+    possible_actions = copy(all_actions)
+
+    neigh_up = (x, y-1)
+    neigh_down = (x, y+1)
+    neigh_left = (x-1, y)
+    neigh_right = (x+1, y)
+
+    if !checkbounds(Bool, world, neigh_up...) || 
+            world[state...] == TO || world[neigh_up...] == BO
+        delete!(possible_actions, :↑)
+    end
+    if !checkbounds(Bool, world, neigh_down...) || 
+            world[state...] == BO || world[neigh_up...] == TO
+        delete!(possible_actions, :↓)
+    end
+    if !checkbounds(Bool, world, neigh_left...) || 
+            world[state...] == LE || world[neigh_up...] == RI
+        delete!(possible_actions, :←)
+    end
+    if !checkbounds(Bool, world, neigh_right...) || 
+            world[state...] == RI || world[neigh_up...] == LE
+        delete!(possible_actions, :→)
+    end
+
+    return collect(possible_actions)
+end
+
+
+#' We set the cost of actions to be 1
+action_cost(action) = 1
+
+#' We now have to define the **transition model** by defining a function $$result : State \times Action \to State$$
+#' function that returns the successor state.
+function result(state, action)
+    x, y = state
+    if action ∉ possible_actions(state)
+        error("cannot apply this action!")
+    end 
+    if action == :↑
+        (x, y-1)
+    elseif action == :↓
+        (x, y+1)
+    elseif action == :←
+        (x-1, y)
+    elseif action == :→ 
+        (x+1, y)
+    else 
+        error("unknown action")
+    end
+end

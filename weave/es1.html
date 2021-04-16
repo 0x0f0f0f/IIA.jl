@@ -699,7 +699,8 @@ div.title {text-align: center;}
 </span><span class='hljl-n'>TO</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-ni'>3</span><span class='hljl-t'>  </span><span class='hljl-cs'># Top Wall </span><span class='hljl-t'>
 </span><span class='hljl-n'>BO</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-ni'>4</span><span class='hljl-t'>  </span><span class='hljl-cs'># Bottom Wall</span><span class='hljl-t'>
 
-</span><span class='hljl-n'>labirinth</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> 
+</span><span class='hljl-cs'># The labirinth</span><span class='hljl-t'>
+</span><span class='hljl-n'>world</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> 
     </span><span class='hljl-p'>[</span><span class='hljl-t'>
         </span><span class='hljl-n'>EE</span><span class='hljl-t'> </span><span class='hljl-n'>EE</span><span class='hljl-t'> </span><span class='hljl-n'>EE</span><span class='hljl-t'> </span><span class='hljl-n'>EE</span><span class='hljl-t'> </span><span class='hljl-p'>;</span><span class='hljl-t'>
         </span><span class='hljl-n'>EE</span><span class='hljl-t'> </span><span class='hljl-n'>TO</span><span class='hljl-t'> </span><span class='hljl-n'>TO</span><span class='hljl-t'> </span><span class='hljl-n'>LE</span><span class='hljl-t'> </span><span class='hljl-p'>;</span><span class='hljl-t'>
@@ -724,23 +725,101 @@ div.title {text-align: center;}
 
 <pre class='hljl'>
 <span class='hljl-n'>initial_state</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-p'>(</span><span class='hljl-ni'>2</span><span class='hljl-p'>,</span><span class='hljl-ni'>1</span><span class='hljl-p'>)</span><span class='hljl-t'>
-</span><span class='hljl-n'>possible_actions</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-p'>[</span><span class='hljl-oB'>:↑</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-oB'>:←</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-oB'>:→</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-oB'>:↓</span><span class='hljl-p'>]</span><span class='hljl-t'>
-</span><span class='hljl-nf'>goal_test</span><span class='hljl-p'>(</span><span class='hljl-n'>state</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-p'>(</span><span class='hljl-n'>state</span><span class='hljl-t'> </span><span class='hljl-oB'>==</span><span class='hljl-t'> </span><span class='hljl-p'>(</span><span class='hljl-ni'>2</span><span class='hljl-p'>,</span><span class='hljl-ni'>4</span><span class='hljl-p'>))</span>
+</span><span class='hljl-nf'>goal_test</span><span class='hljl-p'>(</span><span class='hljl-n'>state</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-p'>(</span><span class='hljl-n'>state</span><span class='hljl-t'> </span><span class='hljl-oB'>==</span><span class='hljl-t'> </span><span class='hljl-p'>(</span><span class='hljl-ni'>2</span><span class='hljl-p'>,</span><span class='hljl-ni'>4</span><span class='hljl-p'>))</span><span class='hljl-t'>
+</span><span class='hljl-n'>all_actions</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>Set</span><span class='hljl-p'>([</span><span class='hljl-oB'>:↑</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-oB'>:←</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-oB'>:→</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-oB'>:↓</span><span class='hljl-p'>])</span>
 </pre>
 
 
 <pre class="output">
-goal_test &#40;generic function with 1 method&#41;
+Set&#123;Symbol&#125; with 4 elements:
+  :↑
+  :↓
+  :→
+  :←
 </pre>
 
 
-<p>We now define a function that gives us</p>
+<p>We now define a function that gives us the possible actions from a given state</p>
 
 
 <pre class='hljl'>
+<span class='hljl-k'>function</span><span class='hljl-t'> </span><span class='hljl-nf'>actions</span><span class='hljl-p'>(</span><span class='hljl-n'>state</span><span class='hljl-p'>)</span><span class='hljl-t'> 
+    </span><span class='hljl-n'>x</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>y</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>state</span><span class='hljl-t'>
+    </span><span class='hljl-n'>rows</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>cols</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>size</span><span class='hljl-p'>(</span><span class='hljl-n'>world</span><span class='hljl-p'>)</span><span class='hljl-t'>
+    </span><span class='hljl-n'>possible_actions</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>copy</span><span class='hljl-p'>(</span><span class='hljl-n'>all_actions</span><span class='hljl-p'>)</span><span class='hljl-t'>
 
+    </span><span class='hljl-n'>neigh_up</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-p'>(</span><span class='hljl-n'>x</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>y</span><span class='hljl-oB'>-</span><span class='hljl-ni'>1</span><span class='hljl-p'>)</span><span class='hljl-t'>
+    </span><span class='hljl-n'>neigh_down</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-p'>(</span><span class='hljl-n'>x</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>y</span><span class='hljl-oB'>+</span><span class='hljl-ni'>1</span><span class='hljl-p'>)</span><span class='hljl-t'>
+    </span><span class='hljl-n'>neigh_left</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-p'>(</span><span class='hljl-n'>x</span><span class='hljl-oB'>-</span><span class='hljl-ni'>1</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>y</span><span class='hljl-p'>)</span><span class='hljl-t'>
+    </span><span class='hljl-n'>neigh_right</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-p'>(</span><span class='hljl-n'>x</span><span class='hljl-oB'>+</span><span class='hljl-ni'>1</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>y</span><span class='hljl-p'>)</span><span class='hljl-t'>
+
+    </span><span class='hljl-k'>if</span><span class='hljl-t'> </span><span class='hljl-oB'>!</span><span class='hljl-nf'>checkbounds</span><span class='hljl-p'>(</span><span class='hljl-n'>Bool</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>world</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>neigh_up</span><span class='hljl-oB'>...</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-oB'>||</span><span class='hljl-t'> 
+            </span><span class='hljl-n'>world</span><span class='hljl-p'>[</span><span class='hljl-n'>state</span><span class='hljl-oB'>...</span><span class='hljl-p'>]</span><span class='hljl-t'> </span><span class='hljl-oB'>==</span><span class='hljl-t'> </span><span class='hljl-n'>TO</span><span class='hljl-t'> </span><span class='hljl-oB'>||</span><span class='hljl-t'> </span><span class='hljl-n'>world</span><span class='hljl-p'>[</span><span class='hljl-n'>neigh_up</span><span class='hljl-oB'>...</span><span class='hljl-p'>]</span><span class='hljl-t'> </span><span class='hljl-oB'>==</span><span class='hljl-t'> </span><span class='hljl-n'>BO</span><span class='hljl-t'>
+        </span><span class='hljl-nf'>delete!</span><span class='hljl-p'>(</span><span class='hljl-n'>possible_actions</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-oB'>:↑</span><span class='hljl-p'>)</span><span class='hljl-t'>
+    </span><span class='hljl-k'>end</span><span class='hljl-t'>
+    </span><span class='hljl-k'>if</span><span class='hljl-t'> </span><span class='hljl-oB'>!</span><span class='hljl-nf'>checkbounds</span><span class='hljl-p'>(</span><span class='hljl-n'>Bool</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>world</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>neigh_down</span><span class='hljl-oB'>...</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-oB'>||</span><span class='hljl-t'> 
+            </span><span class='hljl-n'>world</span><span class='hljl-p'>[</span><span class='hljl-n'>state</span><span class='hljl-oB'>...</span><span class='hljl-p'>]</span><span class='hljl-t'> </span><span class='hljl-oB'>==</span><span class='hljl-t'> </span><span class='hljl-n'>BO</span><span class='hljl-t'> </span><span class='hljl-oB'>||</span><span class='hljl-t'> </span><span class='hljl-n'>world</span><span class='hljl-p'>[</span><span class='hljl-n'>neigh_up</span><span class='hljl-oB'>...</span><span class='hljl-p'>]</span><span class='hljl-t'> </span><span class='hljl-oB'>==</span><span class='hljl-t'> </span><span class='hljl-n'>TO</span><span class='hljl-t'>
+        </span><span class='hljl-nf'>delete!</span><span class='hljl-p'>(</span><span class='hljl-n'>possible_actions</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-oB'>:↓</span><span class='hljl-p'>)</span><span class='hljl-t'>
+    </span><span class='hljl-k'>end</span><span class='hljl-t'>
+    </span><span class='hljl-k'>if</span><span class='hljl-t'> </span><span class='hljl-oB'>!</span><span class='hljl-nf'>checkbounds</span><span class='hljl-p'>(</span><span class='hljl-n'>Bool</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>world</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>neigh_left</span><span class='hljl-oB'>...</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-oB'>||</span><span class='hljl-t'> 
+            </span><span class='hljl-n'>world</span><span class='hljl-p'>[</span><span class='hljl-n'>state</span><span class='hljl-oB'>...</span><span class='hljl-p'>]</span><span class='hljl-t'> </span><span class='hljl-oB'>==</span><span class='hljl-t'> </span><span class='hljl-n'>LE</span><span class='hljl-t'> </span><span class='hljl-oB'>||</span><span class='hljl-t'> </span><span class='hljl-n'>world</span><span class='hljl-p'>[</span><span class='hljl-n'>neigh_up</span><span class='hljl-oB'>...</span><span class='hljl-p'>]</span><span class='hljl-t'> </span><span class='hljl-oB'>==</span><span class='hljl-t'> </span><span class='hljl-n'>RI</span><span class='hljl-t'>
+        </span><span class='hljl-nf'>delete!</span><span class='hljl-p'>(</span><span class='hljl-n'>possible_actions</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-oB'>:←</span><span class='hljl-p'>)</span><span class='hljl-t'>
+    </span><span class='hljl-k'>end</span><span class='hljl-t'>
+    </span><span class='hljl-k'>if</span><span class='hljl-t'> </span><span class='hljl-oB'>!</span><span class='hljl-nf'>checkbounds</span><span class='hljl-p'>(</span><span class='hljl-n'>Bool</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>world</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>neigh_right</span><span class='hljl-oB'>...</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-oB'>||</span><span class='hljl-t'> 
+            </span><span class='hljl-n'>world</span><span class='hljl-p'>[</span><span class='hljl-n'>state</span><span class='hljl-oB'>...</span><span class='hljl-p'>]</span><span class='hljl-t'> </span><span class='hljl-oB'>==</span><span class='hljl-t'> </span><span class='hljl-n'>RI</span><span class='hljl-t'> </span><span class='hljl-oB'>||</span><span class='hljl-t'> </span><span class='hljl-n'>world</span><span class='hljl-p'>[</span><span class='hljl-n'>neigh_up</span><span class='hljl-oB'>...</span><span class='hljl-p'>]</span><span class='hljl-t'> </span><span class='hljl-oB'>==</span><span class='hljl-t'> </span><span class='hljl-n'>LE</span><span class='hljl-t'>
+        </span><span class='hljl-nf'>delete!</span><span class='hljl-p'>(</span><span class='hljl-n'>possible_actions</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-oB'>:→</span><span class='hljl-p'>)</span><span class='hljl-t'>
+    </span><span class='hljl-k'>end</span><span class='hljl-t'>
+
+    </span><span class='hljl-k'>return</span><span class='hljl-t'> </span><span class='hljl-nf'>collect</span><span class='hljl-p'>(</span><span class='hljl-n'>possible_actions</span><span class='hljl-p'>)</span><span class='hljl-t'>
+</span><span class='hljl-k'>end</span>
 </pre>
 
+
+<pre class="output">
+actions &#40;generic function with 1 method&#41;
+</pre>
+
+
+<p>We set the cost of actions to be 1</p>
+
+
+<pre class='hljl'>
+<span class='hljl-nf'>action_cost</span><span class='hljl-p'>(</span><span class='hljl-n'>action</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-ni'>1</span>
+</pre>
+
+
+<pre class="output">
+action_cost &#40;generic function with 1 method&#41;
+</pre>
+
+
+<p>We now have to define the <strong>transition model</strong> by defining a function <span class="math">$result : State \times Action \to State$</span> function that returns the successor state.</p>
+
+
+<pre class='hljl'>
+<span class='hljl-k'>function</span><span class='hljl-t'> </span><span class='hljl-nf'>result</span><span class='hljl-p'>(</span><span class='hljl-n'>state</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>action</span><span class='hljl-p'>)</span><span class='hljl-t'>
+    </span><span class='hljl-n'>x</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>y</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>state</span><span class='hljl-t'>
+    </span><span class='hljl-k'>if</span><span class='hljl-t'> </span><span class='hljl-n'>action</span><span class='hljl-t'> </span><span class='hljl-oB'>∉</span><span class='hljl-t'> </span><span class='hljl-nf'>possible_actions</span><span class='hljl-p'>(</span><span class='hljl-n'>state</span><span class='hljl-p'>)</span><span class='hljl-t'>
+        </span><span class='hljl-nf'>error</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;cannot apply this action!&quot;</span><span class='hljl-p'>)</span><span class='hljl-t'>
+    </span><span class='hljl-k'>end</span><span class='hljl-t'> 
+    </span><span class='hljl-k'>if</span><span class='hljl-t'> </span><span class='hljl-n'>action</span><span class='hljl-t'> </span><span class='hljl-oB'>==</span><span class='hljl-t'> </span><span class='hljl-oB'>:↑</span><span class='hljl-t'>
+        </span><span class='hljl-p'>(</span><span class='hljl-n'>x</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>y</span><span class='hljl-oB'>-</span><span class='hljl-ni'>1</span><span class='hljl-p'>)</span><span class='hljl-t'>
+    </span><span class='hljl-k'>elseif</span><span class='hljl-t'> </span><span class='hljl-n'>action</span><span class='hljl-t'> </span><span class='hljl-oB'>==</span><span class='hljl-t'> </span><span class='hljl-oB'>:↓</span><span class='hljl-t'>
+        </span><span class='hljl-p'>(</span><span class='hljl-n'>x</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>y</span><span class='hljl-oB'>+</span><span class='hljl-ni'>1</span><span class='hljl-p'>)</span><span class='hljl-t'>
+    </span><span class='hljl-k'>elseif</span><span class='hljl-t'> </span><span class='hljl-n'>action</span><span class='hljl-t'> </span><span class='hljl-oB'>==</span><span class='hljl-t'> </span><span class='hljl-oB'>:←</span><span class='hljl-t'>
+        </span><span class='hljl-p'>(</span><span class='hljl-n'>x</span><span class='hljl-oB'>-</span><span class='hljl-ni'>1</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>y</span><span class='hljl-p'>)</span><span class='hljl-t'>
+    </span><span class='hljl-k'>elseif</span><span class='hljl-t'> </span><span class='hljl-n'>action</span><span class='hljl-t'> </span><span class='hljl-oB'>==</span><span class='hljl-t'> </span><span class='hljl-oB'>:→</span><span class='hljl-t'> 
+        </span><span class='hljl-p'>(</span><span class='hljl-n'>x</span><span class='hljl-oB'>+</span><span class='hljl-ni'>1</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>y</span><span class='hljl-p'>)</span><span class='hljl-t'>
+    </span><span class='hljl-k'>else</span><span class='hljl-t'> 
+        </span><span class='hljl-nf'>error</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;unknown action&quot;</span><span class='hljl-p'>)</span><span class='hljl-t'>
+    </span><span class='hljl-k'>end</span><span class='hljl-t'>
+</span><span class='hljl-k'>end</span>
+</pre>
+
+
+<pre class="output">
+result &#40;generic function with 1 method&#41;
+</pre>
 
 
 

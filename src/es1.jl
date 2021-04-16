@@ -23,52 +23,60 @@
 
 #' ### The environment: The labirinth
 
-EE = 0  # Empty Cell
-LE = 1  # Left Wall 
-RI = 2  # Right Wall 
-TO = 3  # Top Wall 
-BO = 4  # Bottom Wall
+const EE = 0  # Empty Cell
+const LE = 1  # Left Wall 
+const RI = 2  # Right Wall 
+const TO = 3  # Top Wall 
+const BO = 4  # Bottom Wall
 
 # The labirinth
 world = 
     [
-        EE EE EE EE ;
-        EE TO TO LE ;
+        EE EE BO EE ;
+        EE TO RI EE ;
         TO RI RI EE ; 
         EE TO EE EE ; 
     ]
 
 #' ### Formulation of the problem as a state search problem 
-#' The **states** are all the possible coordinates of theseus in the labirinth in the form `(x,y)` 
+#' The **states** are all the possible coordinates of theseus in the labirinth in the form `(row,column)` 
+
+# initial coordinate of theseus
 initial_state = (2,1)
+
+# goal cell
 goal_test(state) = (state == (2,4))
+
+# all possible actions
 all_actions = Set([:↑, :←, :→, :↓])
 
 #' We now define a function that gives us the possible actions from a given state
 function actions(state) 
-    x, y = state
+    y, x = state
     rows, cols = size(world)
     possible_actions = copy(all_actions)
 
-    neigh_up = (x, y-1)
-    neigh_down = (x, y+1)
-    neigh_left = (x-1, y)
-    neigh_right = (x+1, y)
+    neigh_up = (y-1, x)
+    neigh_down = (y+1, x)
+    neigh_left = (y, x-1)
+    neigh_right = (y, x+1)
+
+    cell = world[state...]
 
     if !checkbounds(Bool, world, neigh_up...) || 
-            world[state...] == TO || world[neigh_up...] == BO
+            cell == TO || world[neigh_up...] == BO
         delete!(possible_actions, :↑)
     end
     if !checkbounds(Bool, world, neigh_down...) || 
-            world[state...] == BO || world[neigh_up...] == TO
+            cell == BO || world[neigh_down...] == TO
         delete!(possible_actions, :↓)
     end
     if !checkbounds(Bool, world, neigh_left...) || 
-            world[state...] == LE || world[neigh_up...] == RI
+            cell == LE || world[neigh_left...] == RI
         delete!(possible_actions, :←)
     end
     if !checkbounds(Bool, world, neigh_right...) || 
-            world[state...] == RI || world[neigh_up...] == LE
+            cell == RI || world[neigh_right...] == LE
         delete!(possible_actions, :→)
     end
 
@@ -82,19 +90,66 @@ action_cost(action) = 1
 #' We now have to define the **transition model** by defining a function $$result : State \times Action \to State$$
 #' function that returns the successor state.
 function result(state, action)
-    x, y = state
-    if action ∉ possible_actions(state)
+    y, x = state
+    if action ∉ actions(state)
         error("cannot apply this action!")
     end 
     if action == :↑
-        (x, y-1)
+        (y-1, x)
     elseif action == :↓
-        (x, y+1)
+        (y+1, x)
     elseif action == :←
-        (x-1, y)
+        (y, x-1)
     elseif action == :→ 
-        (x+1, y)
+        (y, x+1)
     else 
         error("unknown action")
     end
 end
+
+#' ## Visualizing the state space
+#' The state space is implicityly defined by the initial state, the possible actions and the transition model.
+
+#' Let's build the state space graph
+
+using LightGraphs, GraphRecipes, Plots
+
+rows, cols = size(world)
+states = Tuple{Int, Int}[]
+colors = []
+g = SimpleGraph()
+
+for x in 1:cols, y in 1:rows 
+    add_vertex!(g)
+    push!(states, (x,y))
+    push!(colors, :white)
+end
+
+names = repr.(states)
+
+for i in 1:nv(g)
+    state = states[i]
+    if state == initial_state
+        names[i] = "START $(repr(states[i]))"
+    end
+
+    if goal_test(state)
+        names[i] = "GOAL $(repr(states[i]))"
+    end
+    state_vertex_number = indexin([state], states)[1]
+    for action in actions(state)
+        res_state = result(state, action)
+        result_vertex_number = indexin([res_state], states)[1]
+        add_edge!(g, state_vertex_number, result_vertex_number)
+    end
+end
+
+
+
+graphplot(g, names=names, curves=false, 
+    nodeshape=:rect, nodecolor=:white, nodesize=0.15,
+    method=:tree)
+
+
+#' # Search algorithms
+#' ## Tree Search

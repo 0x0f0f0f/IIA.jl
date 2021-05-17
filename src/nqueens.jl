@@ -131,37 +131,23 @@ end
 # TESTS 
 # =================================================
 
-pop_size = 100
+pop_size = 1000
 board_size = 8
 
 population = [randgenome(board_size) for i in 1:pop_size]
 genetic_algorithm(population)
 
+# =========================================================
+# Benchmarks 
+# =========================================================
+
 using BenchmarkTools
 using Plots 
-
-# Benchmarks 
-
-
-@eval BenchmarkTools macro btimed(args...)
-    _, params = prunekwargs(args...)
-    bench, trial, result = gensym(), gensym(), gensym()
-    trialmin, trialallocs = gensym(), gensym()
-    tune_phase = hasevals(params) ? :() : :($BenchmarkTools.tune!($bench))
-    return esc(quote
-        local $bench = $BenchmarkTools.@benchmarkable $(args...)
-        $BenchmarkTools.warmup($bench)
-        $tune_phase
-        local $trial, $result = $BenchmarkTools.run_result($bench)
-        local $trialmin = $BenchmarkTools.minimum($trial)
-        return $result, $BenchmarkTools.time($trialmin)
-    end)
-end
 
 benchs = []
 function bench_gen(p, cx, smp)
     smp[] = smp[] + 1
-    (ok, max_iter, _) = genetic_algorithm(p)
+    (ok, max_iter, _) = genetic_algorithm(p, 1000) # 1000 max iters
     cx[] = cx[] + Int(ok)
 end
 
@@ -187,7 +173,5 @@ plot(1:20, [median(bx).time for (bx, rate) in benchs], label="time (ns)", legend
 xticks!(1:20)
 xlabel!("board size")
 plot!(twinx(), [rate for (bx, rate) in benchs], linecolor=:orange, label="success rate", legend=:topright, markershape=:square, markercolor=:orange)
-
-plot(rand(10), label = "Series ")
 
 median(benchs[1][1]).time
